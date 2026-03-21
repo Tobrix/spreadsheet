@@ -276,7 +276,13 @@
 
     listContainer.innerHTML = ''; // Vyčistit staré
 
-    Object.keys(currencyRates).forEach(code => {
+    // Vytvoříme seznam měn bez USD, seřadíme je a USD přidáme na konec
+    const codes = Object.keys(currencyRates)
+        .filter(c => c !== 'USD')
+        .sort()
+        .concat(['USD']);
+
+    codes.forEach(code => {
         const item = document.createElement('div');
         item.className = `dropdown-item ${currentCurrency === code ? 'selected-item' : ''}`;
         item.dataset.value = code;
