@@ -435,9 +435,19 @@
             } else if (currentCurrency === 'CNY') {
                 displayPrice = `¥${p.priceCny}`;
             } else {
-                // Pro všechny ostatní měny z tabulky (CZK, EUR, PLN...)
-                const convertedPrice = Math.round(p.priceUsd * rate);
-                displayPrice = currentCurrency === 'CZK' || currentCurrency === 'PLN' 
+                // Dynamický výpočet podle kurzu
+                let convertedPrice;
+                
+                if (rate < 5) {
+                    // Pro měny jako EUR, GBP, AUD (nízký kurz) ukážeme 2 desetinná místa
+                    convertedPrice = (p.priceUsd * rate).toFixed(2);
+                } else {
+                    // Pro CZK, JPY, RUB (vysoký kurz) zaokrouhlíme na celá čísla
+                    convertedPrice = Math.round(p.priceUsd * rate);
+                }
+            
+                // Formátování zobrazení (symbol před nebo za číslem)
+                displayPrice = (currentCurrency === 'CZK' || currentCurrency === 'PLN') 
                     ? `${convertedPrice} ${symbol}` 
                     : `${symbol}${convertedPrice}`;
             }
