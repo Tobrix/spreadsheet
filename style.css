@@ -911,3 +911,31 @@
     transform: translateY(0); /* Sjede na svou pozici */
 }
 
+.main-footer {
+    background-color: #1a1a1a; /* Tmavé pozadí ladící k webu */
+    color: #ffffff;
+    padding: 30px 0;
+    text-align: center;
+    margin-top: 50px; /* Mezera od produktů */
+    border-top: 2px solid #ff1e42; /* Červená linka v barvě tvé kočky */
+    font-family: sans-serif;
+}
+
+.footer-content p {
+    margin: 5px 0;
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.author-name {
+    color: #ff1e42; /* Tvé jméno bude v barvě loga */
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.by-author {
+    font-size: 12px !important;
+    margin-top: 10px !important;
+}
+
