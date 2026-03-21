@@ -911,14 +911,32 @@
     transform: translateY(0); /* Sjede na svou pozici */
 }
 
+/* Nastavení pro celou stránku */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* 100 % výšky okna */
+}
+
+/* Hlavní obsah (vše mezi headerem a footerem) */
+/* Pokud máš produkty v nějakém divu (např. <main> nebo #app), přidej mu tohle: */
+main, .container, #app { 
+    flex: 1; 
+}
+
+/* Tvůj footer */
 .main-footer {
-    background-color: #1a1a1a; /* Tmavé pozadí ladící k webu */
-    color: #ffffff;
-    padding: 30px 0;
+    flex-shrink: 0; /* Zajistí, že se footer nezmáčkne */
+    background-color: #111;
+    color: #fff;
+    padding: 30px 20px;
     text-align: center;
-    margin-top: 50px; /* Mezera od produktů */
-    border-top: 2px solid #ff1e42; /* Červená linka v barvě tvé kočky */
-    font-family: sans-serif;
+    border-top: 3px solid #ff1e42;
 }
 
 .footer-content p {
