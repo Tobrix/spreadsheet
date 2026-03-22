@@ -222,6 +222,73 @@
         }
     };
 
+    // --- NAČÍTÁNÍ DAT ---
+    async function loadData() {
+        try {
+            const cacheBuster = `&t=${new Date().getTime()}`;
+            const response = await fetch(sheetUrl + cacheBuster);
+            const csvText = await response.text();
+            const rows = csvText.split(/\r?\n/).filter(row => row.trim() !== "").slice(1);
+
+            allProducts = rows.map((row, index) => {
+                const columns = [];
+                let current = "";
+                let inQuotes = false;
+                for (let i = 0; i < row.length; i++) {
+                    const char = row[i];
+                    if (char === '"') inQuotes = !inQuotes;
+                    else if (char === ',' && !inQuotes) {
+                        columns.push(current);
+                        current = "";
+                    } else { current += char; }
+                }
+                columns.push(current);
+
+                const clean = (str) => (str || "").replace(/^"|"$/g, '').trim();
+                if (columns.length < 2) return null;
+
+                // NAČTENÍ KURZU ZE SLOUPCE K (INDEX 10) - pouze z prvního datového řádku
+                if (index === 0 && columns[10]) {
+                    let rateRaw = columns[10].replace(/"/g, '').replace(',', '.');
+                    czkRate = parseFloat(rateRaw) || 23.0;
+                    console.log("Aktualizovaný kurz z tabulky:", czkRate);
+                }
+
+                const rateValue = parseFloat(clean(columns[10]).replace(',', '.'));
+                const currencyCode = clean(columns[11]);
+
+                if (!isNaN(rateValue) && currencyCode) {
+                    currencyRates[currencyCode] = rateValue;
+                    console.log(`Načten kurz: ${currencyCode} = ${rateValue}`);
+                }
+
+                const imgArray = [
+                    clean(columns[6]), clean(columns[7]), clean(columns[8]), clean(columns[9])
+                ].filter(url => url.length > 10);
+
+                return {
+                    uid: index,
+                    productUrl: clean(columns[0]),
+                    title: clean(columns[1]),
+                    priceUsd: parseFloat(clean(columns[2]).replace(',', '.')) || 0,
+                    priceCny: clean(columns[3]),
+                    brand: clean(columns[4]) || "ostatní",
+                    category: clean(columns[5]) || "ostatní",
+                    images: imgArray,
+                    currentImgIndex: 0
+                };
+            }).filter(p => p !== null && p.title);
+
+            initDropdowns();
+            updateBrandFilter();
+            updateCategoryFilter();
+            updateLanguage(); 
+            generateCurrencyMenu();
+            initCurrencyDropdown();
+            filterProducts();
+        } catch (error) { console.error("Chyba při načítání dat:", error); }
+    }
+    
     function initCurrencyDropdown() {
         setupDropdownListeners('currencyDropdown', () => {
             currentCurrency = document.getElementById('currencyDropdown').dataset.value;
@@ -313,74 +380,6 @@
         listContainer.appendChild(item);
     });
 }
-
-
-    // --- NAČÍTÁNÍ DAT ---
-    async function loadData() {
-        try {
-            const cacheBuster = `&t=${new Date().getTime()}`;
-            const response = await fetch(sheetUrl + cacheBuster);
-            const csvText = await response.text();
-            const rows = csvText.split(/\r?\n/).filter(row => row.trim() !== "").slice(1);
-
-            allProducts = rows.map((row, index) => {
-                const columns = [];
-                let current = "";
-                let inQuotes = false;
-                for (let i = 0; i < row.length; i++) {
-                    const char = row[i];
-                    if (char === '"') inQuotes = !inQuotes;
-                    else if (char === ',' && !inQuotes) {
-                        columns.push(current);
-                        current = "";
-                    } else { current += char; }
-                }
-                columns.push(current);
-
-                const clean = (str) => (str || "").replace(/^"|"$/g, '').trim();
-                if (columns.length < 2) return null;
-
-                // NAČTENÍ KURZU ZE SLOUPCE K (INDEX 10) - pouze z prvního datového řádku
-                if (index === 0 && columns[10]) {
-                    let rateRaw = columns[10].replace(/"/g, '').replace(',', '.');
-                    czkRate = parseFloat(rateRaw) || 23.0;
-                    console.log("Aktualizovaný kurz z tabulky:", czkRate);
-                }
-
-                const rateValue = parseFloat(clean(columns[10]).replace(',', '.'));
-                const currencyCode = clean(columns[11]);
-
-                if (!isNaN(rateValue) && currencyCode) {
-                    currencyRates[currencyCode] = rateValue;
-                    console.log(`Načten kurz: ${currencyCode} = ${rateValue}`);
-                }
-
-                const imgArray = [
-                    clean(columns[6]), clean(columns[7]), clean(columns[8]), clean(columns[9])
-                ].filter(url => url.length > 10);
-
-                return {
-                    uid: index,
-                    productUrl: clean(columns[0]),
-                    title: clean(columns[1]),
-                    priceUsd: parseFloat(clean(columns[2]).replace(',', '.')) || 0,
-                    priceCny: clean(columns[3]),
-                    brand: clean(columns[4]) || "ostatní",
-                    category: clean(columns[5]) || "ostatní",
-                    images: imgArray,
-                    currentImgIndex: 0
-                };
-            }).filter(p => p !== null && p.title);
-
-            initDropdowns();
-            updateBrandFilter();
-            updateCategoryFilter();
-            updateLanguage(); 
-            generateCurrencyMenu();
-            initCurrencyDropdown();
-            filterProducts();
-        } catch (error) { console.error("Chyba při načítání dat:", error); }
-    }
 
     // --- FILTRY A ZOBRAZENÍ ---
     function updateCategoryFilter() {
