@@ -556,6 +556,7 @@
             /* KLÍČOVÁ VLASTNOST: */
             object-fit: cover; /* Vyplní prostor bez deformace, zachová poměr stran */
             display: block;
+            background-color: #f0f0f0;        
         }
         .product-info { padding: 18px; }
         .product-title { font-size: 0.95rem; font-weight: 700; margin-bottom: 8px; color: var(--text-dark); }
