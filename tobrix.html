@@ -124,7 +124,12 @@
             </div>
         </div>
 
-        <div class="product-grid" id="productGrid"></div>
+        <div class="product-grid" id="productGrid">
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+        </div>
     </main>
     
 <script>
@@ -693,7 +698,10 @@
     };
 
     document.getElementById('searchBtn').addEventListener('click', filterProducts);
-    window.addEventListener('load', () => { initBannerSlider(); loadData(); });
+    window.addEventListener('DOMContentLoaded', () => { 
+    initBannerSlider(); 
+    loadData(); 
+});
 </script>
 </body>
 </html>
