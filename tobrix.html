@@ -16,7 +16,7 @@
             y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
         })(window, document, "clarity", "script", "vzqrd7ergb");
     </script>
-     
+    
 </head>
 <body>
 
@@ -131,7 +131,17 @@
         <div class="product-grid" id="productGrid">
         </div>
     </main>
-    
+
+    <footer>
+        <div class="footer-inner">
+            <a href="https://oopbuy.com/register?inviteCode=YX31TL0NK" target="_blank" class="footer-logo">Tobrix Spreadsheet</a>
+            <span class="footer-sep">·</span>
+            <span class="footer-copy">© <span id="footerYear"></span> by Tobrix. All rights reserved.</span>
+            <span class="footer-sep">·</span>
+            <a href="https://oopbuy.com/register?inviteCode=YX31TL0NK" target="_blank" class="footer-link"><i class="fas fa-external-link-alt"></i> Powered by OOPBUY</a>
+        </div>
+    </footer>
+
 <script>
     const sheetUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQyN819V31dGDyly_VlpyAZlrTI9q4smxW6JmwMsuXvw3peayLgQ0HqD3rQAECIA0PgvbzYaiwnxsT4/pub?gid=0&single=true&output=csv';
     
@@ -754,7 +764,9 @@
         applyTheme(current === 'dark' ? 'light' : 'dark');
     });
 
-    window.addEventListener('DOMContentLoaded', () => { 
+    window.addEventListener('DOMContentLoaded', () => {
+        const yr = document.getElementById('footerYear');
+        if (yr) yr.textContent = new Date().getFullYear();
         initTheme();
         initBannerSlider(); 
         loadData(); 
