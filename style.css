@@ -974,3 +974,24 @@ footer {
     .logo { display: none !important; }
     header { justify-content: flex-end; }
 }
+
+/* ===== MOBILE TOAST FIX ===== */
+@media (max-width: 640px) {
+    #toast {
+        right: 16px !important;
+        left: auto !important;
+        bottom: 20px !important;
+        transform: none !important;
+        width: auto !important;
+        max-width: calc(100vw - 32px) !important;
+    }
+    #toast.hide {
+        animation: slideOut 0.3s cubic-bezier(0.4,0,0.2,1) forwards !important;
+    }
+}
+
+/* ===== NO HORIZONTAL SCROLL ===== */
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
