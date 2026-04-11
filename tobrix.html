@@ -69,6 +69,10 @@
             <i class="fas fa-globe"></i> <span id="currentLangDisplay">EN</span>
         </div>
 
+        <button id="themeToggle" class="nav-minimal-btn theme-toggle-btn" title="Přepnout téma">
+            <i class="fas fa-moon" id="themeIcon"></i>
+        </button>
+
         <div class="custom-dropdown minimal" id="currencyDropdown" data-value="USD">
             <div class="dropdown-selected-minimal">
                 <span id="currentCurrencyDisplay">USD</span>
@@ -363,11 +367,10 @@
 
     listContainer.innerHTML = ''; // Vyčistit staré
 
-    // Vytvoříme seznam měn bez USD, seřadíme je a USD přidáme na konec
-    const codes = Object.keys(currencyRates)
-        .filter(c => c !== 'USD')
-        .sort()
-        .concat(['USD']);
+    // Seřadíme všechny měny, USD přidáme na začátek
+    const codes = ['USD'].concat(
+        Object.keys(currencyRates).filter(c => c !== 'USD').sort()
+    );
 
     codes.forEach(code => {
         const item = document.createElement('div');
@@ -722,10 +725,40 @@
     };
 
     document.getElementById('searchBtn').addEventListener('click', filterProducts);
+
+    // --- THEME TOGGLE ---
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        const icon = document.getElementById('themeIcon');
+        if (icon) {
+            icon.className = theme === 'light' ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        localStorage.setItem('theme', theme);
+    }
+
+    function initTheme() {
+        const saved = localStorage.getItem('theme');
+        if (saved) {
+            applyTheme(saved);
+        } else {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            applyTheme(prefersDark ? 'dark' : 'light');
+        }
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (!localStorage.getItem('theme')) applyTheme(e.matches ? 'dark' : 'light');
+        });
+    }
+
+    document.getElementById('themeToggle').addEventListener('click', () => {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        applyTheme(current === 'dark' ? 'light' : 'dark');
+    });
+
     window.addEventListener('DOMContentLoaded', () => { 
-    initBannerSlider(); 
-    loadData(); 
-});
+        initTheme();
+        initBannerSlider(); 
+        loadData(); 
+    });
 </script>
 </body>
 </html>
