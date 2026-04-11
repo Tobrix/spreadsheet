@@ -6,7 +6,7 @@
     <meta name="referrer" content="no-referrer">
     <link rel="icon" type="image/png" href="logo.png">
     <title>Tobrix Spreadsheet | OOPBUY</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel='stylesheet' href='style.css'>
     <script type="text/javascript">
@@ -443,11 +443,23 @@
         grid.innerHTML = '';
         document.getElementById('product-count').innerText = data.length;
 
-        data.forEach(p => {
-            const photos = p.images.filter(url => url.match(/\.(jpg|jpeg|png|webp)/i));
-            const mainImg = photos.length > 0 ? photos[p.currentImgIndex] : 'https://placehold.co/400x400?text=No+Image';
+        if (data.length === 0) {
+            grid.innerHTML = `<div class="empty-state"><i class="fas fa-search"></i><p>Žádné produkty nenalezeny. Zkus jiný výraz nebo filtr.</p></div>`;
+            return;
+        }
+
+        data.forEach((p, idx) => {
+            const photos = p.images.filter(url => url.length > 10 && (
+                url.match(/\.(jpg|jpeg|png|webp)/i) ||
+                url.includes('hahbuy.com') ||
+                url.includes('alicdn.com') ||
+                url.includes('geilicdn.com') ||
+                url.includes('oopbuy.com')
+            ));
+            const safeIdx = photos.length > 0 ? p.currentImgIndex % photos.length : 0;
+            const mainImg = photos.length > 0 ? photos[safeIdx] : 'https://placehold.co/400x400/161618/444?text=No+Image';
             const hasMultiple = photos.length > 1;
-            const qcLink = p.images.find(url => url.includes('qc/share'));
+            const qcLink = p.images.find(url => url.includes('qcimage') || url.includes('qc/share'));
 
             let displayPrice;
             const rate = currencyRates[currentCurrency] || 1;
@@ -477,6 +489,7 @@
 
             const card = document.createElement('div');
             card.className = 'product-card';
+            card.style.animationDelay = `${Math.min(idx * 40, 400)}ms`;
             card.innerHTML = `
                 <div class="product-image-container">
                     <button class="nav-arrow prev-arrow ${hasMultiple ? '' : 'hidden'}" onclick="event.stopPropagation(); changeImg(${p.uid}, -1)">❮</button>
@@ -694,7 +707,13 @@
 
     window.changeImg = function(uid, dir) {
         const p = allProducts.find(x => x.uid === uid);
-        const photos = p.images.filter(url => url.match(/\.(jpg|jpeg|png|webp)/i));
+        const photos = p.images.filter(url => url.length > 10 && (
+            url.match(/\.(jpg|jpeg|png|webp)/i) ||
+            url.includes('hahbuy.com') ||
+            url.includes('alicdn.com') ||
+            url.includes('geilicdn.com') ||
+            url.includes('oopbuy.com')
+        ));
         if (photos.length === 0) return;
         p.currentImgIndex = (p.currentImgIndex + dir + photos.length) % photos.length;
         document.getElementById(`img-${uid}`).src = photos[p.currentImgIndex];
