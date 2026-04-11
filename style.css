@@ -991,7 +991,7 @@ footer {
 }
 
 /* ===== NO HORIZONTAL SCROLL ===== */
-html, body {
-    overflow-x: hidden;
+body {
+    overflow-x: clip;
     max-width: 100vw;
 }
